@@ -1,5 +1,7 @@
 package com.example.demo.controller;
 
+import java.security.Principal;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -7,6 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import com.example.demo.model.service.MemberService; // MemberService 위치에 맞게 수정
+import com.example.demo.model.domain.Member;
 import com.example.demo.model.dto.MemberForm; // MemberForm 위치에 맞게 수정
 
 @Controller // 컨트롤러 어노테이션 명시
@@ -34,5 +37,13 @@ public class MemberController {
             return "signup"; // 입력값 유지한 채 다시 가입 화면
         }
         return "redirect:/login?signup"; // 성공 → 로그인 화면
+    }
+
+    // MemberController (import java.security.Principal, Member)
+    @GetMapping("/mypage") // 내 정보 : 로그인한 사람만
+    public String mypage(Principal principal, Model model) { // 현재 로그인 사용자
+        Member member = memberService.findByUsername(principal.getName());
+        model.addAttribute("member", member);
+        return "mypage"; // mypage.html 연결
     }
 }
